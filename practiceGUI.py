@@ -4,11 +4,12 @@ import Tkinter
 import xml.etree.ElementTree as ET
 from urllib2 import urlopen
 import base64
-from json import load, dumps
 import xml.etree.ElementTree as ET
 import re
 import httplib
 import time
+
+# This application allows the user to enter a city and a state to get the current weather for that location via the Weather Underground API. It also uses the API to get the average temperature for today's date over the past five years and then shows each year's average as well as the average of all of the averages. 
 
 # url for logo: http://icons-ak.wxug.com/graphics/wu2/logo_130x80.png
 
