@@ -85,19 +85,19 @@ class simpleapp_tk(Tkinter.Tk):
         # make label to display weather information with city and state
         self.cityAndStateLabelVariable = Tkinter.StringVar()
         cityLabel = Tkinter.Label(self,textvariable=self.cityAndStateLabelVariable,
-                              anchor="w",fg="black",bg="white")
-        cityLabel.grid(column=0,row=3,sticky='EW')
+                              anchor="w",fg="white",bg="blue")
+        cityLabel.grid(column=0,row=3,sticky='W')
 
         # make label to display restaurant information for city and state
         self.restaurantLabelVariable = Tkinter.StringVar()
-        restaurantLabel = Tkinter.Label(self,textvariable=self.restaurantLabelVariable,anchor="w",fg="black",bg="white")
-        restaurantLabel.grid(column=0,row=4,sticky='EW')
+        restaurantLabel = Tkinter.Label(self,textvariable=self.restaurantLabelVariable,anchor="w",fg="white",bg="black")
+        restaurantLabel.grid(column=0,row=4,sticky='W')
 
         # format the window and the widgets
-        self.grid_columnconfigure(0,weight=1)
-        self.resizable(True,False)
+        #self.grid_columnconfigure(0,weight=1)
+        #self.resizable(True,False)
         self.update()
-        self.geometry("700x300")       
+        self.geometry("1050x700")       
         self.stateBox.focus_set()
         self.stateBox.selection_range(0, Tkinter.END)
         self.cityBox.focus_set()
@@ -108,7 +108,7 @@ class simpleapp_tk(Tkinter.Tk):
         self.cityAndStateLabelVariable.set( "Getting weather in " + self.cityEntryVariable.get() + ", " + self.stateEntryVariable.get() + "...")
         self.cityBox.focus_set()
         self.cityBox.selection_range(0, Tkinter.END)
-        #self.getInfo()
+        self.getInfo()
         self.getRestaurants()
 
     def getRestaurants(self):
@@ -120,7 +120,7 @@ class simpleapp_tk(Tkinter.Tk):
         response = urlopen(url)
         json_obj = load(response)
 
-        self.restaurantLabelVariable.set(self.restaurantLabelVariable.get() + "-------------------\nTop Restaurants in " + self.cityEntryVariable.get() + ", " + self.stateEntryVariable.get() + "\n")
+        self.restaurantLabelVariable.set(self.restaurantLabelVariable.get() + "-------------------\nTop Restaurants in " + self.cityEntryVariable.get() + ", " + self.stateEntryVariable.get() + ":\n")
         for g in json_obj['response']['groups']:
             for i in g['items']:
                 self.restaurantLabelVariable.set(self.restaurantLabelVariable.get() + "NAME: " + i['venue']['name'] + "\nPHONE: " + i['venue']['contact']['formattedPhone'] + "\nADDRESS: " + i['venue']['location']['address'])
@@ -171,6 +171,7 @@ class simpleapp_tk(Tkinter.Tk):
         currentYear = time.strftime("%Y")
         currentYearInt = int(currentYear)
         
+        count = 0
         # loop through API calls for each of the past five years
         i = currentYearInt - 1
         while i > (currentYearInt - 6):
@@ -189,14 +190,18 @@ class simpleapp_tk(Tkinter.Tk):
             
             # get the average temperature for that day in that year
             meanTempDay = root.find('history').find('dailysummary').find('summary').find('meantempi').text
-            # update the sum of the average temperatures
-            meanTemp += int(meanTempDay)
+            if meanTempDay is None:
+                meanTempDay = "n/a"
+            else: 
+                # update the sum of the average temperatures
+                meanTemp += int(meanTempDay)
+                count += 1
             i = i - 1
             # update the label to display this average temperature with the given year
             self.cityAndStateLabelVariable.set(self.cityAndStateLabelVariable.get() + "\n" + str(i) + " -- " + str(meanTempDay) + " F")
 
         # calculate the average temperature of the averages of the current day for the past five years
-        meanTemp = meanTemp/5
+        meanTemp = meanTemp/count
         # display the average
         self.cityAndStateLabelVariable.set(self.cityAndStateLabelVariable.get() + "\nThe average temperature on this day in the past five years is: " + str(meanTemp) + " F")
 
